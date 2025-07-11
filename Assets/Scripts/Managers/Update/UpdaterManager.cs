@@ -21,6 +21,11 @@ public class UpdaterManager : MonoBehaviour
         _updaters.Add(updater);
     }
 
+    public void RemoveIUpdaterInList(IUpdater updater)
+    {
+        _updaters.Remove(updater);
+    }
+
     public void AddILateUpdaterInList(ILateUpdater updater)
     {
         _lateUpdaters.Add(updater);
@@ -28,11 +33,11 @@ public class UpdaterManager : MonoBehaviour
 
     void Update()
     {
-        foreach (IUpdater updater in _updaters)
+        for (int i = _updaters.Count - 1; i >= 0; i--)
         {
-            if(updater != null)
+            if (_updaters[i] != null)
             {
-                updater.UpdateSection();
+                _updaters[i].UpdateSection();
             }
         }
     }
