@@ -61,7 +61,7 @@ public class HordeGameManager : MonoBehaviour, IUpdater
 
     public void DespawnAllEnemies()
     {
-        for(int i = 0; i< activeEnemies.Count; i++)
+        for(int i = activeEnemies.Count - 1; i >= 0; i--)
         {
             DespawnEnemy(activeEnemies.ElementAt(i).Key);
         }
