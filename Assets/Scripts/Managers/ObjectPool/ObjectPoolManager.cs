@@ -45,7 +45,7 @@ public class ObjectPoolManager : MonoBehaviour
         return default;
     }
 
-    public void Return<T>(string key, GameObject obj)
+    public void Return(string key, GameObject obj)
     {
         if (_pools.TryGetValue(key, out var poolObj) && poolObj is Pool pool)
             pool.Return(obj);
