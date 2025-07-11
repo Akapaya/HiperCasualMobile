@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3cf8fac6b0f24c04895aca6487f9b269, type: 3}
-  m_Name: GameData
+  m_Name: HordeData
   m_EditorClassIdentifier: 
   SpawnInterval: 2
   MaxEnemies: 10
