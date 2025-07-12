@@ -74,7 +74,6 @@ GameObject:
   - component: {fileID: 6627776860549399276}
   - component: {fileID: 3865272663948019882}
   - component: {fileID: 7347533672321206862}
-  - component: {fileID: 1058181966636580926}
   m_Layer: 0
   m_Name: mixamorig:Hips
   m_TagString: Enemy
@@ -90,8 +89,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 628677220577167032}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 1.191479, z: 0.004971}
+  m_LocalRotation: {x: 0.50679255, y: -0.5174281, z: 0.52222437, w: 0.45023462}
+  m_LocalPosition: {x: 0.43477637, y: 1.598698, z: 0.008316886}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -99,7 +98,7 @@ Transform:
   - {fileID: 8433061881469578125}
   - {fileID: 6616463144220395338}
   m_Father: {fileID: 6629374649034236010}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 94.600006, y: -52.21701, z: 42.522003}
 --- !u!65 &3865272663948019882
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -148,43 +147,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1058181966636580926
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 628677220577167032}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5edfdc2becbb6c04dae7630183abe154, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ragdollBodies:
-  - {fileID: 8709912245596641313}
-  - {fileID: 7750528052189193581}
-  - {fileID: 8479233602182085640}
-  - {fileID: 4559038910462926418}
-  - {fileID: 8161122547474545387}
-  - {fileID: 894618081687717663}
-  - {fileID: 5488056402829556225}
-  - {fileID: 8364301889812094818}
-  - {fileID: 2606571750984833931}
-  - {fileID: 6074313026141598979}
-  - {fileID: 7347533672321206862}
-  ragdollColliders:
-  - {fileID: 1413460498570665618}
-  - {fileID: 224074833522242834}
-  - {fileID: 6728379452534281018}
-  - {fileID: 4138226023559035520}
-  - {fileID: 2735203760838711896}
-  - {fileID: 5837693838930944076}
-  - {fileID: 2000443682918643510}
-  - {fileID: 8853183249529280273}
-  - {fileID: 290103958725986271}
-  - {fileID: 2038556339431489300}
-  mainCollider: {fileID: 3865272663948019882}
-  animator: {fileID: 3641801172823493904}
 --- !u!1 &1155337768891677148
 GameObject:
   m_ObjectHideFlags: 0
@@ -2255,7 +2217,10 @@ GameObject:
   m_Component:
   - component: {fileID: 6629374649034236010}
   - component: {fileID: 3641801172823493904}
-  - component: {fileID: 5596845787569199658}
+  - component: {fileID: 4873169095332051247}
+  - component: {fileID: 2794976950314078218}
+  - component: {fileID: 7044566252557836984}
+  - component: {fileID: 1378639940790105724}
   m_Layer: 0
   m_Name: Man
   m_TagString: Enemy
@@ -2302,12 +2267,32 @@ Animator:
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
-  m_WarningMessage: 
+  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
+    are already bound by a Humanoid avatar. These transforms can only be changed
+    by Humanoid clips.\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:Hips'\n\tFrom
+    animation clip 'Stack'"
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &5596845787569199658
+--- !u!114 &4873169095332051247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7663750829261492857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dc9bd5f5bacadf47884d0d4ec65903e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enemyDataSO: {fileID: 11400000, guid: c395c68c596532340baa7af5cda6a0c7, type: 2}
+  _ragdollActivator: {fileID: 1378639940790105724}
+  _currentHealth: 0
+  _isAlive: 0
+  _onStack: 0
+--- !u!114 &2794976950314078218
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2321,11 +2306,72 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _enemyDataSO: {fileID: 11400000, guid: c395c68c596532340baa7af5cda6a0c7, type: 2}
   _animator: {fileID: 3641801172823493904}
-  _currentHealth: 0
+  _enemyModel: {fileID: 4873169095332051247}
   targetPoint: {x: 0, y: 0, z: 0}
   stopTimer: 0
   isWaiting: 0
   _animatorSpeedParamter: Velocity
+--- !u!136 &7044566252557836984
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7663750829261492857}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2.8317382
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.368282, z: 0}
+--- !u!114 &1378639940790105724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7663750829261492857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5edfdc2becbb6c04dae7630183abe154, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ragdollBodies:
+  - {fileID: 8709912245596641313}
+  - {fileID: 7750528052189193581}
+  - {fileID: 8479233602182085640}
+  - {fileID: 4559038910462926418}
+  - {fileID: 8161122547474545387}
+  - {fileID: 894618081687717663}
+  - {fileID: 5488056402829556225}
+  - {fileID: 8364301889812094818}
+  - {fileID: 2606571750984833931}
+  - {fileID: 7347533672321206862}
+  - {fileID: 6074313026141598979}
+  ragdollColliders:
+  - {fileID: 1413460498570665618}
+  - {fileID: 224074833522242834}
+  - {fileID: 6728379452534281018}
+  - {fileID: 4138226023559035520}
+  - {fileID: 2735203760838711896}
+  - {fileID: 5837693838930944076}
+  - {fileID: 2000443682918643510}
+  - {fileID: 8853183249529280273}
+  - {fileID: 290103958725986271}
+  - {fileID: 3865272663948019882}
+  - {fileID: 2038556339431489300}
+  mainCollider: {fileID: 7044566252557836984}
+  animator: {fileID: 3641801172823493904}
 --- !u!1 &7740556987463528224
 GameObject:
   m_ObjectHideFlags: 0

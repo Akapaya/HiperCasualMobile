@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 373a54ca5a24f5745b65da515a980929, type: 3}
   m_Name: EnemyData_1
   m_EditorClassIdentifier: 
+  EnemyID: Man
   MoveSpeed: 3
-  MaxHealth: 3
+  MaxHealth: 1
+  AmountDropCoins: 3
   PatrolAreaMin: {x: -10, y: -10}
   PatrolAreaMax: {x: 10, y: 10}
   PointReachDistance: 0.5

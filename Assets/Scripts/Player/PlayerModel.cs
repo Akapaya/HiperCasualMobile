@@ -1,6 +1,7 @@
+using System;
 using System.Collections;
-using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerModel : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class PlayerModel : MonoBehaviour
     [SerializeField] private string _animatorUpperLayer = "UpperBody";
     [SerializeField] private string _targetTags = "Enemy";
     [SerializeField] private float _pushDuration = 2f;
+
+    [Header("Events")]
+    public Action<Transform> OnEnemyEliminated;
 
     public void MoveCharacter(Vector3 moveDirection)
     {
@@ -45,20 +49,29 @@ public class PlayerModel : MonoBehaviour
     {
         if (_isPush) return;
 
-        if (other.CompareTag(_targetTags))
+        if (other.gameObject.TryGetComponent(out IDamagable damagable))
         {
-            _animator.SetLayerWeight(_animator.GetLayerIndex(_animatorUpperLayer), 1);
-            StartCoroutine(PunchRoutine(other.gameObject));
+            if (damagable.IsAlive)
+            {
+                _animator.SetLayerWeight(_animator.GetLayerIndex(_animatorUpperLayer), 1);
+                _animator.Play(_animatorPushAnimation, _animator.GetLayerIndex(_animatorUpperLayer), 0f);
+                StartCoroutine(PunchRoutine(damagable, other));
+            }
         }
     }
 
-    private IEnumerator PunchRoutine(GameObject enemy)
+    private IEnumerator PunchRoutine(IDamagable damagable, Collider body)
     {
         _isPush = true;
 
-        enemy.GetComponent<RagdollActivator>().ActivateRagdoll();
+        damagable.TakeDamage(_playerSettings.Strenght);
 
         yield return new WaitForSeconds(_pushDuration);
+
+        if(!damagable.IsAlive)
+        {
+            OnEnemyEliminated?.Invoke(body.gameObject.transform);
+        }
 
         StopPush();
     }
@@ -66,7 +79,6 @@ public class PlayerModel : MonoBehaviour
     public void StopPush()
     {
         _isPush = false;
-        _animator.Play(_animatorPushAnimation, _animator.GetLayerIndex(_animatorUpperLayer));
         _animator.SetLayerWeight(_animator.GetLayerIndex(_animatorUpperLayer), 0);
     }
 }

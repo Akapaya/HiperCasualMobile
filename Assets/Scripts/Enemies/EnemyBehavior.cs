@@ -1,21 +1,17 @@
 using System;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class EnemyBehavior : MonoBehaviour, IPoolable, IUpdater
 {
     [Header("References")]
     [SerializeField] private EnemyDataSO _enemyDataSO;
     [SerializeField] private Animator _animator;
+    [SerializeField] private EnemyModel _enemyModel;
 
     [Header("Temp Data")]
-    [SerializeField] private int _currentHealth;
     [SerializeField] private Vector3 targetPoint;
     [SerializeField] private float stopTimer = 0f;
     [SerializeField] private bool isWaiting = false;
-
-    [Header("Events")]
-    public Action<EnemyBehavior> OnDeath;
 
     [Header("Settings")]
     [SerializeField] private string _animatorSpeedParamter = "Velocity";
@@ -29,7 +25,6 @@ public class EnemyBehavior : MonoBehaviour, IPoolable, IUpdater
     public void Start()
     {
         PickNewTargetPoint();
-        _currentHealth = _enemyDataSO.MaxHealth;
         stopTimer = _enemyDataSO.StopTime;
         isWaiting = true;
     }
@@ -43,6 +38,11 @@ public class EnemyBehavior : MonoBehaviour, IPoolable, IUpdater
     #region IUpdater
     public void UpdateSection()
     {
+        if(!_enemyModel.IsAlive || _enemyModel.OnStack)
+        {
+            return;
+        }
+
         if (isWaiting)
         {
             stopTimer -= Time.deltaTime;
@@ -81,21 +81,6 @@ public class EnemyBehavior : MonoBehaviour, IPoolable, IUpdater
         float x = UnityEngine.Random.Range(_enemyDataSO.PatrolAreaMin.x, _enemyDataSO.PatrolAreaMax.x);
         float z = UnityEngine.Random.Range(_enemyDataSO.PatrolAreaMin.y, _enemyDataSO.PatrolAreaMax.y);
         targetPoint = new Vector3(x, transform.position.y, z);
-    }
-
-    public void TakeDamage(int damage)
-    {
-        _currentHealth -= damage;
-
-        if (_currentHealth <= 0)
-        {
-            Die();
-        }
-    }
-
-    void Die()
-    {
-        OnDeath?.Invoke(this);
     }
     #endregion
 

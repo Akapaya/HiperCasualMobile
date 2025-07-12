@@ -5,4 +5,5 @@ public class PlayerDataSO : ScriptableObject
 {
     public float MoveSpeed = 1.0f;
     public float RotationSpeed = 1.0f;
+    public int Strenght = 1;
 }

@@ -9,7 +9,7 @@ public class RagdollActivator : MonoBehaviour
     public Animator animator;
 
     #region Start Methods
-    void Start()
+    void OnEnable()
     {
         SetRagdollActive(false);
     }
@@ -19,6 +19,13 @@ public class RagdollActivator : MonoBehaviour
     public void ActivateRagdoll()
     {
         SetRagdollActive(true);
+    }
+
+    [ContextMenu("DeactivateRagdoll")]
+    public void DeactivateRagdoll()
+    {
+        SetRagdollActive(false);
+        animator.Play("Stack");
     }
 
     void SetRagdollActive(bool active)
