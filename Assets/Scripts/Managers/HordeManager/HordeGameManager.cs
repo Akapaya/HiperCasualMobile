@@ -6,6 +6,7 @@ public class HordeGameManager : MonoBehaviour, IUpdater
 {
     [Header("References")]
     [SerializeField] private HordeDataSO _hordeDataSO;
+    [SerializeField] public static HordeGameManager Instance;
 
     [Header("Settings")]
     [SerializeField] private Transform[] _spawnPoints;
@@ -15,6 +16,12 @@ public class HordeGameManager : MonoBehaviour, IUpdater
     private Dictionary<GameObject,string> activeEnemies = new(10);
 
     #region Start Methods
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
     private void Start()
     {
         UpdaterManager.Instance.AddIUpdaterInList(this);
