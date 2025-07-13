@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyBehavior : MonoBehaviour, IPoolable, IUpdater
@@ -9,9 +10,10 @@ public class EnemyBehavior : MonoBehaviour, IPoolable, IUpdater
     [SerializeField] private EnemyModel _enemyModel;
 
     [Header("Temp Data")]
-    [SerializeField] private Vector3 targetPoint;
-    [SerializeField] private float stopTimer = 0f;
-    [SerializeField] private bool isWaiting = false;
+    [SerializeField] private Queue<Waypoint> _targetPath;
+    [SerializeField] private Waypoint _currentPoint;
+    [SerializeField] private float _stopTimer = 0f;
+    [SerializeField] private bool _isWaiting = false;
 
     [Header("Settings")]
     [SerializeField] private string _animatorSpeedParamter = "Velocity";
@@ -24,9 +26,9 @@ public class EnemyBehavior : MonoBehaviour, IPoolable, IUpdater
 
     public void Start()
     {
-        PickNewTargetPoint();
-        stopTimer = _enemyDataSO.StopTime;
-        isWaiting = true;
+        PickNewTargetPath();
+        _stopTimer = _enemyDataSO.StopTime;
+        _isWaiting = true;
     }
 
     private void OnDisable()
@@ -43,44 +45,58 @@ public class EnemyBehavior : MonoBehaviour, IPoolable, IUpdater
             return;
         }
 
-        if (isWaiting)
+        if (_isWaiting)
         {
-            stopTimer -= Time.deltaTime;
-            if (stopTimer <= 0f)
+            _stopTimer -= Time.deltaTime;
+            if (_stopTimer <= 0f)
             {
-                isWaiting = false;
+                _isWaiting = false;
             }
             return;
         }
 
-        float distance = Vector3.Distance(transform.position, targetPoint);
-
-        if (distance > _enemyDataSO.PointReachDistance)
+        if(_currentPoint != null)
         {
-            Vector3 direction = (targetPoint - transform.position).normalized;
-            float inputMagnitude = direction.magnitude;
+            float distance = Vector3.Distance(transform.position, _currentPoint.transform.position);
 
-            float normalizedSpeed = Mathf.Clamp01(inputMagnitude);
-            _animator.SetFloat(_animatorSpeedParamter, normalizedSpeed);
-            transform.position += direction * _enemyDataSO.MoveSpeed * Time.deltaTime;
-            transform.forward = direction;
+            if (distance > _enemyDataSO.PointReachDistance)
+            {
+                Vector3 direction = (_currentPoint.transform.position - transform.position).normalized;
+                float inputMagnitude = direction.magnitude;
+
+                float normalizedSpeed = Mathf.Clamp01(inputMagnitude);
+                _animator.SetFloat(_animatorSpeedParamter, normalizedSpeed);
+                transform.position += direction * _enemyDataSO.MoveSpeed * Time.deltaTime;
+                transform.forward = direction;
+            }
+            else
+            {
+                _animator.SetFloat(_animatorSpeedParamter, 0);
+                _stopTimer = _enemyDataSO.StopTime;
+                _isWaiting = true;
+
+                if (_targetPath.Count > 0)
+                {
+                    _currentPoint = _targetPath.Dequeue();
+                }
+                else
+                {
+                    PickNewTargetPath();
+                }
+            }
         }
         else
         {
-            _animator.SetFloat(_animatorSpeedParamter, 0);
-            stopTimer = _enemyDataSO.StopTime;
-            isWaiting = true;
-            PickNewTargetPoint();
+            PickNewTargetPath();
         }
     }
     #endregion
 
     #region Enemy Methods
-    private void PickNewTargetPoint()
+    private void PickNewTargetPath()
     {
-        float x = UnityEngine.Random.Range(_enemyDataSO.PatrolAreaMin.x, _enemyDataSO.PatrolAreaMax.x);
-        float z = UnityEngine.Random.Range(_enemyDataSO.PatrolAreaMin.y, _enemyDataSO.PatrolAreaMax.y);
-        targetPoint = new Vector3(x, transform.position.y, z);
+        _targetPath = WaypointManager.Instance.GenerateRandomPath(transform.position);
+        _currentPoint = _targetPath.Dequeue();
     }
     #endregion
 

@@ -9,6 +9,7 @@ public class PlayerModel : MonoBehaviour
     [SerializeField] private PlayerDataSO _playerSettings;
     [SerializeField] private Animator _animator;
     [SerializeField] private Transform _model;
+    [SerializeField] private Rigidbody _rigidbody;
 
     [Header("TempData")]
     [SerializeField] private float _moveDisplacement = 0;
@@ -45,7 +46,7 @@ public class PlayerModel : MonoBehaviour
         {
             Vector3 move = moveDirection.normalized * _playerSettings.MoveSpeed * Time.deltaTime;
             RotateCharacter(move);
-            transform.position += move;
+            _rigidbody.MovePosition(_rigidbody.position + move);
         }
     }
 

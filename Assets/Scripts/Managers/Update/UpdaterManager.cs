@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UpdaterManager : MonoBehaviour
@@ -8,6 +9,7 @@ public class UpdaterManager : MonoBehaviour
 
     [Header("TempData")]
     private List<IUpdater> _updaters = new(10);
+    private List<IFixedUpdater> _fixedUpdaters = new(10);
     private List<ILateUpdater> _lateUpdaters = new(10);
 
     void Awake()
@@ -24,6 +26,11 @@ public class UpdaterManager : MonoBehaviour
     public void RemoveIUpdaterInList(IUpdater updater)
     {
         _updaters.Remove(updater);
+    }
+
+    public void AddIFixedUpdaterInList(IFixedUpdater updater)
+    {
+        _fixedUpdaters.Add(updater);
     }
 
     public void AddILateUpdaterInList(ILateUpdater updater)
@@ -49,6 +56,17 @@ public class UpdaterManager : MonoBehaviour
             if(lateUpdater != null)
             {
                 lateUpdater.LateUpdateSection();
+            }
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        foreach(IFixedUpdater fixedUpdater in _fixedUpdaters)
+        {
+            if(fixedUpdater != null)
+            {
+                fixedUpdater.FixedUpdateSection();
             }
         }
     }
