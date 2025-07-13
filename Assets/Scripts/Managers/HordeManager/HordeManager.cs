@@ -2,18 +2,18 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class HordeGameManager : MonoBehaviour, IUpdater
+public class HordeManager : MonoBehaviour, IUpdater, IPoolUser
 {
     [Header("References")]
     [SerializeField] private HordeDataSO _hordeDataSO;
-    [SerializeField] public static HordeGameManager Instance;
+    [SerializeField] public static HordeManager Instance;
 
     [Header("Settings")]
     [SerializeField] private Transform[] _spawnPoints;
 
     [Header("Temp Data")]
     private float timer;
-    private Dictionary<GameObject,string> activeEnemies = new(10);
+    private List<GameObject> activeEnemies = new(10);
 
     #region Start Methods
     void Awake()
@@ -50,30 +50,21 @@ public class HordeGameManager : MonoBehaviour, IUpdater
             return;
         }
 
-        GameObject enemyGO = ObjectPoolManager.Instance.Get(randomID);
+        GameObject enemyGO = ObjectPoolManager.Instance.Get(randomID, this);
 
         Transform point = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
 
         enemyGO.transform.position = point.position;
         enemyGO.transform.rotation = Quaternion.identity;
 
-        activeEnemies[enemyGO] = randomID;
+        activeEnemies.Add(enemyGO);
     }
+    #endregion
 
-    public void DespawnEnemy(GameObject enemyGO)
+    #region IPoolUser
+    public void OnObjectsReturned(GameObject obj)
     {
-        ObjectPoolManager.Instance.Return(activeEnemies[enemyGO], enemyGO);
-        activeEnemies.Remove(enemyGO);
-    }
-
-    public void DespawnAllEnemies()
-    {
-        for(int i = activeEnemies.Count - 1; i >= 0; i--)
-        {
-            DespawnEnemy(activeEnemies.ElementAt(i).Key);
-        }
-
-        activeEnemies.Clear();
+        activeEnemies.Remove(obj);
     }
     #endregion
 }

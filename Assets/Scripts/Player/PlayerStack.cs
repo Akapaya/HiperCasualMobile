@@ -17,6 +17,8 @@ public class PlayerStack : MonoBehaviour, IUpdater
     [SerializeField] private Vector3 _rotationOffset;
     [SerializeField] private RotationAxis _lockAxes = RotationAxis.Y;
 
+    public List<Transform> Stack { get => _stack;}
+
     [System.Flags]
     public enum RotationAxis
     {

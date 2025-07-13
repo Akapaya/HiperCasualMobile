@@ -9,7 +9,8 @@ public class ObjectPoolManager : MonoBehaviour
     [SerializeField] private string[] _addressableKeys = new string[10];
 
     [Header("Temp Data")]
-    private Dictionary<string, object> _pools = new();
+    private Dictionary<string, object> _pools = new(10);
+    private Dictionary<GameObject, IPoolUser> _activesObjects = new(10);
 
     void Awake()
     {
@@ -36,10 +37,14 @@ public class ObjectPoolManager : MonoBehaviour
         }
     }
 
-    public GameObject Get(string key)
+    public GameObject Get(string key, IPoolUser poolUser)
     {
         if (_pools.TryGetValue(key, out var poolObj) && poolObj is Pool pool)
-            return pool.Get();
+        {
+            GameObject obj = pool.Get();
+            _activesObjects.Add(obj, poolUser);
+            return obj;
+        }
 
         Debug.LogWarning($"Pool {key} Not Found");
         return default;
@@ -48,6 +53,11 @@ public class ObjectPoolManager : MonoBehaviour
     public void Return(string key, GameObject obj)
     {
         if (_pools.TryGetValue(key, out var poolObj) && poolObj is Pool pool)
+        {
+            obj.transform.SetParent(this.gameObject.transform);
+            _activesObjects[obj].OnObjectsReturned(obj);
+            _activesObjects.Remove(obj);
             pool.Return(obj);
+        }
     }
 }

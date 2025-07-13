@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
+using static AreaEnum;
 
 public class PlayerModel : MonoBehaviour
 {
@@ -23,7 +23,17 @@ public class PlayerModel : MonoBehaviour
 
     [Header("Events")]
     public Action<Transform> OnEnemyEliminated;
+    public Action<int> OnCoinsChanged;
 
+    #region Start Methods
+    private void Start()
+    {
+        AreaManager.Instance.RegisterObserver(AreasTypes.SellArea, (int coins) => IncreaseCoins(coins));
+        OnCoinsChanged += UIManager.Instance.ChangeTMPCoinText;
+    }
+    #endregion
+
+    #region Movement Feature
     public void MoveCharacter(Vector3 moveDirection)
     {
         float inputMagnitude = moveDirection.magnitude;
@@ -44,22 +54,9 @@ public class PlayerModel : MonoBehaviour
         Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
         _model.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _playerSettings.RotationSpeed * Time.deltaTime);
     }
+    #endregion
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (_isPush) return;
-
-        if (other.gameObject.TryGetComponent(out IDamagable damagable))
-        {
-            if (damagable.IsAlive)
-            {
-                _animator.SetLayerWeight(_animator.GetLayerIndex(_animatorUpperLayer), 1);
-                _animator.Play(_animatorPushAnimation, _animator.GetLayerIndex(_animatorUpperLayer), 0f);
-                StartCoroutine(PunchRoutine(damagable, other));
-            }
-        }
-    }
-
+    #region Push Feature
     private IEnumerator PunchRoutine(IDamagable damagable, Collider body)
     {
         _isPush = true;
@@ -68,7 +65,7 @@ public class PlayerModel : MonoBehaviour
 
         yield return new WaitForSeconds(_pushDuration);
 
-        if(!damagable.IsAlive)
+        if (!damagable.IsAlive)
         {
             OnEnemyEliminated?.Invoke(body.gameObject.transform);
         }
@@ -80,5 +77,50 @@ public class PlayerModel : MonoBehaviour
     {
         _isPush = false;
         _animator.SetLayerWeight(_animator.GetLayerIndex(_animatorUpperLayer), 0);
+    }
+    #endregion
+
+    #region Sell Feature
+    public void IncreaseCoins(int coins)
+    {
+        _playerSettings.Coins += coins;
+        OnCoinsChanged?.Invoke(_playerSettings.Coins);
+    }
+
+    public void DecreaseCoins(int coins)
+    {
+        _playerSettings.Coins -= coins;
+        OnCoinsChanged?.Invoke(_playerSettings.Coins);
+    }
+    #endregion
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out IDamagable damagable))
+        {
+            if (_isPush) return;
+            if (damagable.IsAlive)
+            {
+                _animator.SetLayerWeight(_animator.GetLayerIndex(_animatorUpperLayer), 1);
+                _animator.Play(_animatorPushAnimation, _animator.GetLayerIndex(_animatorUpperLayer), 0f);
+                StartCoroutine(PunchRoutine(damagable, other));
+            }
+            return;
+        }
+
+        if(other.gameObject.TryGetComponent(out IArea area))
+        {
+            area.ActivateArea();
+            return;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out IArea area))
+        {
+            area.DeactivateArea();
+            return;
+        }
     }
 }

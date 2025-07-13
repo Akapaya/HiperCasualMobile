@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class EnemyModel : MonoBehaviour, IDamagable, IStackable
+public class EnemyModel : MonoBehaviour, IDamagable, IStackable, ISellItem
 {
     [Header("References")]
     [SerializeField] private EnemyDataSO _enemyDataSO;
@@ -18,17 +18,15 @@ public class EnemyModel : MonoBehaviour, IDamagable, IStackable
     public bool IsAlive { get => _isAlive;}
     public bool OnStack { get => _onStack;}
 
+    public int ValueItem => _enemyDataSO.AmountDropCoins;
+
+    public string StackFamily => _enemyDataSO.EnemyID;
+
     private void OnEnable()
     {
-        OnDeath += ReturnToPool;
         _isAlive = true;
         _onStack = false;
         _currentHealth = _enemyDataSO.MaxHealth;
-    }
-
-    private void OnDisable()
-    {
-        OnDeath -= ReturnToPool;
     }
 
     public void TakeDamage(int damage)
@@ -45,17 +43,11 @@ public class EnemyModel : MonoBehaviour, IDamagable, IStackable
     {
         _isAlive = false;
         _ragdollActivator.ActivateRagdoll();
-        //OnDeath?.Invoke();
     }
 
     public void ActiveOnStackState()
     {
         _onStack = true;
         _ragdollActivator.DeactivateRagdoll();
-    }
-
-    private void ReturnToPool()
-    {
-        HordeGameManager.Instance.DespawnEnemy(this.gameObject);
     }
 }
