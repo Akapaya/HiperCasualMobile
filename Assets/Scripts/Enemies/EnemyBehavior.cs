@@ -1,8 +1,11 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyBehavior : MonoBehaviour, IPoolable, IUpdater
+/// <summary>
+/// Enemy behaviour is a Pool Object and use IUpdater
+/// Controls the path and manages movement between waypoints and their states.
+/// </summary>
+public class EnemyBehavior : MonoBehaviour, IUpdater
 {
     [Header("References")]
     [SerializeField] private EnemyDataSO _enemyDataSO;
@@ -26,7 +29,7 @@ public class EnemyBehavior : MonoBehaviour, IPoolable, IUpdater
 
     public void Start()
     {
-        PickNewTargetPath();
+        PickNewPath();
         _stopTimer = _enemyDataSO.StopTime;
         _isWaiting = true;
     }
@@ -40,11 +43,39 @@ public class EnemyBehavior : MonoBehaviour, IPoolable, IUpdater
     #region IUpdater
     public void UpdateSection()
     {
-        if(!_enemyModel.IsAlive || _enemyModel.OnStack)
-        {
+        if (ShouldAbortUpdate())
             return;
-        }
 
+        if (IsWaiting())
+            return;
+
+        if (_currentPoint != null)
+        {
+            HandleMovementOrPathUpdate();
+        }
+        else
+        {
+            PickNewPath();
+        }
+    }
+    #endregion
+
+    #region Enemy Methods
+    /// <summary>
+    /// Check if Enemy is Alive or on player stack
+    /// </summary>
+    /// <returns>True if is alive and NOT on stack</returns>
+    private bool ShouldAbortUpdate()
+    {
+        return !_enemyModel.IsAlive || _enemyModel.OnStack;
+    }
+
+    /// <summary>
+    /// Handle with Waiting state until go to next way point
+    /// </summary>
+    /// <returns>True if is waiting</returns>
+    private bool IsWaiting()
+    {
         if (_isWaiting)
         {
             _stopTimer -= Time.deltaTime;
@@ -52,68 +83,75 @@ public class EnemyBehavior : MonoBehaviour, IPoolable, IUpdater
             {
                 _isWaiting = false;
             }
-            return;
+            return true;
         }
+        return false;
+    }
 
-        if(_currentPoint != null)
+    /// <summary>
+    /// Check if close of current point
+    /// </summary>
+    private void HandleMovementOrPathUpdate()
+    {
+        float distance = Vector3.Distance(transform.position, _currentPoint.transform.position);
+
+        if (distance > _enemyDataSO.PointReachDistance)
         {
-            float distance = Vector3.Distance(transform.position, _currentPoint.transform.position);
-
-            if (distance > _enemyDataSO.PointReachDistance)
-            {
-                Vector3 direction = (_currentPoint.transform.position - transform.position).normalized;
-                float inputMagnitude = direction.magnitude;
-
-                float normalizedSpeed = Mathf.Clamp01(inputMagnitude);
-                _animator.SetFloat(_animatorSpeedParamter, normalizedSpeed);
-                transform.position += direction * _enemyDataSO.MoveSpeed * Time.deltaTime;
-                transform.forward = direction;
-            }
-            else
-            {
-                _animator.SetFloat(_animatorSpeedParamter, 0);
-                _stopTimer = _enemyDataSO.StopTime;
-                _isWaiting = true;
-
-                if (_targetPath.Count > 0)
-                {
-                    _currentPoint = _targetPath.Dequeue();
-                }
-                else
-                {
-                    PickNewTargetPath();
-                }
-            }
+            MoveTowardsCurrentPoint();
         }
         else
         {
-            PickNewTargetPath();
+            StopAtPoint();
+            GetNextPointOrPath();
         }
     }
-    #endregion
 
-    #region Enemy Methods
-    private void PickNewTargetPath()
+    /// <summary>
+    /// Move enemy to current point using transform to avoid high cost of process
+    /// </summary>
+    private void MoveTowardsCurrentPoint()
+    {
+        Vector3 direction = (_currentPoint.transform.position - transform.position).normalized;
+        float inputMagnitude = direction.magnitude;
+        float normalizedSpeed = Mathf.Clamp01(inputMagnitude);
+
+        _animator.SetFloat(_animatorSpeedParamter, normalizedSpeed);
+        transform.position += direction * _enemyDataSO.MoveSpeed * Time.deltaTime;
+        transform.forward = direction;
+    }
+
+    /// <summary>
+    /// Handle to achieve the current point
+    /// </summary>
+    private void StopAtPoint()
+    {
+        _animator.SetFloat(_animatorSpeedParamter, 0);
+        _stopTimer = _enemyDataSO.StopTime;
+        _isWaiting = true;
+    }
+
+    /// <summary>
+    /// Check if has other way point in current path, or get new path
+    /// </summary>
+    private void GetNextPointOrPath()
+    {
+        if (_targetPath.Count > 0)
+        {
+            _currentPoint = _targetPath.Dequeue();
+        }
+        else
+        {
+            PickNewPath();
+        }
+    }
+
+    /// <summary>
+    /// Get a new Random Path from way point Manager
+    /// </summary>
+    private void PickNewPath()
     {
         _targetPath = WaypointManager.Instance.GenerateRandomPath(transform.position);
         _currentPoint = _targetPath.Dequeue();
-    }
-    #endregion
-
-    #region Ipoolable
-    public void OnDespawned()
-    {
-        
-    }
-
-    public void Destroy()
-    {
-        
-    }
-
-    public void OnPooled()
-    {
-        
     }
     #endregion
 }

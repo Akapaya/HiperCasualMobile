@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Enemy logic and stats part, controls damage, stack and ragdoll logic.
+/// </summary>
 public class EnemyModel : MonoBehaviour, IDamagable, IStackable, ISellItem
 {
     [Header("References")]
@@ -9,8 +12,8 @@ public class EnemyModel : MonoBehaviour, IDamagable, IStackable, ISellItem
 
     [Header("Temp Data")]
     [SerializeField] private int _currentHealth;
-    [SerializeField] bool _isAlive;
-    [SerializeField] bool _onStack;
+    [SerializeField] private bool _isAlive;
+    [SerializeField] private bool _onStack;
 
     [Header("Events")]
     public Action OnDeath;
@@ -22,13 +25,16 @@ public class EnemyModel : MonoBehaviour, IDamagable, IStackable, ISellItem
 
     public string StackFamily => _enemyDataSO.EnemyID;
 
+    #region Start Methods
     private void OnEnable()
     {
         _isAlive = true;
         _onStack = false;
         _currentHealth = _enemyDataSO.MaxHealth;
     }
+    #endregion
 
+    #region IDamagable Methods
     public void TakeDamage(int damage)
     {
         _currentHealth -= damage;
@@ -44,10 +50,13 @@ public class EnemyModel : MonoBehaviour, IDamagable, IStackable, ISellItem
         _isAlive = false;
         _ragdollActivator.ActivateRagdoll();
     }
+    #endregion
 
+    #region IStackable Methods
     public void ActiveOnStackState()
     {
         _onStack = true;
         _ragdollActivator.DeactivateRagdoll();
     }
+    #endregion
 }
