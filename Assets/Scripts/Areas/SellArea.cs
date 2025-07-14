@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// The sales area has its own interface of areas and methods to handle the stack items that are dumped into it.
+/// </summary>
 public class SellArea : MonoBehaviour, IArea
 {
     [Header("References")]
@@ -21,16 +24,39 @@ public class SellArea : MonoBehaviour, IArea
     [Header("Events")]
     [SerializeField] private Action<int> OnSellItem;
 
+    #region Start Methods
     private void OnEnable()
     {
         AreaManager.Instance.RegisterInDictionary(_areaType, this);
     }
+    #endregion
 
+    #region IArea Methods
     public void ActivateArea()
     {
         StartCoroutine(SellRoutine());
     }
 
+    public void DeactivateArea()
+    {
+        StartCoroutine(CleanStack());
+    }
+
+    public void RegisterObserver(Action<int> action)
+    {
+        OnSellItem += action;
+    }
+
+    public void UnregisterObserver(Action<int> action)
+    {
+        OnSellItem -= action;
+    }
+    #endregion
+
+    #region Sell Methods
+    /// <summary>
+    /// Routine to start sell all stack items dropped
+    /// </summary>
     private IEnumerator SellRoutine()
     {
         while (_playerStack.Stack.Count > 0)
@@ -46,6 +72,10 @@ public class SellArea : MonoBehaviour, IArea
         }
     }
 
+    /// <summary>
+    /// Animation to move in Arc the stack item dropped
+    /// </summary>
+    /// <param name="obj">Transform of stack item</param>
     private IEnumerator MoveInArc(Transform obj)
     {
         Vector3 start = obj.position;
@@ -80,11 +110,9 @@ public class SellArea : MonoBehaviour, IArea
         OnSellItem?.Invoke(obj.GetComponent<ISellItem>().ValueItem);
     }
 
-    public void DeactivateArea()
-    {
-        StartCoroutine(CleanStack());
-    }
-
+    /// <summary>
+    /// Routine to clean Stack after a period, deactive items and return to pool
+    /// </summary>
     private IEnumerator CleanStack()
     {
         yield return new WaitForSeconds(_timeUntilCleanStack);
@@ -101,14 +129,5 @@ public class SellArea : MonoBehaviour, IArea
             yield return new WaitForSeconds(0.1f);
         }
     }
-
-    public void RegisterObserver(Action<int> action)
-    {
-        OnSellItem += action;
-    }
-
-    public void UnregisterObserver(Action<int> action)
-    {
-        OnSellItem -= action;
-    }
+    #endregion
 }

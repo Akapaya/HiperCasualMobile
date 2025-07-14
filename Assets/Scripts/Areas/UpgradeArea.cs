@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// The upgrade area has its own interface of areas.
+/// </summary>
 public class UpgradeArea : MonoBehaviour, IArea
 {
     [Header("Settings")]
@@ -9,11 +12,14 @@ public class UpgradeArea : MonoBehaviour, IArea
     [Header("Events")]
     [SerializeField] private Action<int> OnUpgradeItem;
 
+    #region Start Methods
     private void OnEnable()
     {
         AreaManager.Instance.RegisterInDictionary(_areaType, this);
     }
+    #endregion
 
+    #region IArea Methods
     public void ActivateArea()
     {
         UpgradeManager.Instance.OpenUpgradePanel();
@@ -33,4 +39,5 @@ public class UpgradeArea : MonoBehaviour, IArea
     {
         OnUpgradeItem -= action;
     }
+    #endregion
 }
