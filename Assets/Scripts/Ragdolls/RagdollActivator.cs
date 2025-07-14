@@ -31,7 +31,6 @@ public class RagdollActivator : MonoBehaviour
     void SetRagdollActive(bool active)
     {
         animator.enabled = !active;
-        mainCollider.enabled = !active;
 
         foreach (var col in ragdollColliders)
             col.enabled = active;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using UnityEditor;
 using UnityEngine;
 using static AreaEnum;
 
@@ -10,6 +11,7 @@ public class PlayerModel : MonoBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private Transform _model;
     [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private Material _material;
 
     [Header("TempData")]
     [SerializeField] private float _moveDisplacement = 0;
@@ -30,7 +32,13 @@ public class PlayerModel : MonoBehaviour
     private void Start()
     {
         AreaManager.Instance.RegisterObserver(AreasTypes.SellArea, (int coins) => IncreaseCoins(coins));
+        UpgradeManager.Instance.OnPurchasedUpgrade += HandledUpgrade;
         OnCoinsChanged += UIManager.Instance.ChangeTMPCoinText;
+    }
+
+    private void OnDisable()
+    {
+        UpgradeManager.Instance.OnPurchasedUpgrade -= HandledUpgrade;
     }
     #endregion
 
@@ -95,6 +103,7 @@ public class PlayerModel : MonoBehaviour
     }
     #endregion
 
+    #region Triggers
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.TryGetComponent(out IDamagable damagable))
@@ -105,6 +114,10 @@ public class PlayerModel : MonoBehaviour
                 _animator.SetLayerWeight(_animator.GetLayerIndex(_animatorUpperLayer), 1);
                 _animator.Play(_animatorPushAnimation, _animator.GetLayerIndex(_animatorUpperLayer), 0f);
                 StartCoroutine(PunchRoutine(damagable, other));
+            }
+            else
+            {
+                OnEnemyEliminated?.Invoke(other.gameObject.transform);
             }
             return;
         }
@@ -124,4 +137,24 @@ public class PlayerModel : MonoBehaviour
             return;
         }
     }
+    #endregion
+
+    #region Upgrades
+    public void HandledUpgrade(UpgradeSO upgrade)
+    {
+        if( _playerSettings.Coins > upgrade.Cost )
+        {
+            _playerSettings.Coins -= upgrade.Cost;
+            OnCoinsChanged?.Invoke(_playerSettings.Coins);
+            _playerSettings.MaxStack += upgrade.Stack;
+            _playerSettings.Strenght += upgrade.Strenght;
+            _playerSettings.MoveSpeed += upgrade.Speed;
+            _material.color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f));
+        }
+        else
+        {
+            UIManager.Instance.AdviceNotEnoughCoins();
+        }
+    }
+    #endregion
 }

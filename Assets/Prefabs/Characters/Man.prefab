@@ -2307,9 +2307,9 @@ MonoBehaviour:
   _enemyDataSO: {fileID: 11400000, guid: c395c68c596532340baa7af5cda6a0c7, type: 2}
   _animator: {fileID: 3641801172823493904}
   _enemyModel: {fileID: 4873169095332051247}
-  targetPoint: {x: 0, y: 0, z: 0}
-  stopTimer: 0
-  isWaiting: 0
+  _currentPoint: {fileID: 0}
+  _stopTimer: 0
+  _isWaiting: 0
   _animatorSpeedParamter: Velocity
 --- !u!136 &7044566252557836984
 CapsuleCollider:
@@ -2321,10 +2321,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0

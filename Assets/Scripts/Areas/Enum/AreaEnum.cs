@@ -6,6 +6,7 @@ public class AreaEnum : MonoBehaviour
     public enum AreasTypes
     {
         None = 0,
-        SellArea = 1
+        SellArea = 1,
+        UpgradeArea = 2
     }
 }

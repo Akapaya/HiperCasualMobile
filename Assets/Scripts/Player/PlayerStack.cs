@@ -46,7 +46,7 @@ public class PlayerStack : MonoBehaviour, IUpdater
 
     public void AddEnemyToStack(Transform target)
     {
-        if(target.TryGetComponent(out IStackable stackable))
+        if(target.TryGetComponent(out IStackable stackable) && _stack.Count < _playerSettings.MaxStack)
         {
             stackable.ActiveOnStackState();
             Vector3 stackOffset = new Vector3(0, _stackHeight, 0);

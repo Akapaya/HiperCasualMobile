@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33e5d31da749b3541b63b9b912808c90, type: 3}
-  m_Name: PlayerData
+  m_Script: {fileID: 11500000, guid: ae6e4fb0c5694364c93d45f9e59add52, type: 3}
+  m_Name: Upgrade_2
   m_EditorClassIdentifier: 
-  MoveSpeed: 4
-  RotationSpeed: 5
-  MaxStack: 1
-  Strenght: 1
-  Coins: 0
+  Cost: 10
+  Description: Increase Speed and Stack by 1
+  Stack: 1
+  Strenght: 0
+  Speed: 1
