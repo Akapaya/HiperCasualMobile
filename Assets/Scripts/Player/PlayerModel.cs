@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
-using UnityEditor;
 using UnityEngine;
 using static AreaEnum;
-
+/// <summary>
+/// Enemy logic and stats part, controls stats, movement, animation...
+/// </summary>
 public class PlayerModel : MonoBehaviour
 {
     [Header("References")]
@@ -43,6 +44,10 @@ public class PlayerModel : MonoBehaviour
     #endregion
 
     #region Movement Feature
+    /// <summary>
+    /// Moves Player using rigid body to avoid pass though walls
+    /// </summary>
+    /// <param name="moveDirection">Vector with direction move</param>
     public void MoveCharacter(Vector3 moveDirection)
     {
         float inputMagnitude = moveDirection.magnitude;
@@ -58,6 +63,10 @@ public class PlayerModel : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Rotate player to direction of movement
+    /// </summary>
+    /// <param name="moveDirection">Vector with direction move</param>
     public void RotateCharacter(Vector3 moveDirection)
     {
         Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
@@ -66,6 +75,12 @@ public class PlayerModel : MonoBehaviour
     #endregion
 
     #region Push Feature
+    /// <summary>
+    /// Routine to push enemies, dealing damage and handle if enemy eliminated
+    /// </summary>
+    /// <param name="damagable">Script of IDamagable</param>
+    /// <param name="body">Collider of objects punched</param>
+    /// <returns></returns>
     private IEnumerator PunchRoutine(IDamagable damagable, Collider body)
     {
         _isPush = true;
@@ -82,6 +97,9 @@ public class PlayerModel : MonoBehaviour
         StopPush();
     }
 
+    /// <summary>
+    /// Stop animation and state of Push
+    /// </summary>
     public void StopPush()
     {
         _isPush = false;
@@ -140,6 +158,10 @@ public class PlayerModel : MonoBehaviour
     #endregion
 
     #region Upgrades
+    /// <summary>
+    /// Handle to increase stats of player depends of UpgradeSO
+    /// </summary>
+    /// <param name="upgrade">Upgrade SO Purchased</param>
     public void HandledUpgrade(UpgradeSO upgrade)
     {
         if( _playerSettings.Coins > upgrade.Cost )

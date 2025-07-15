@@ -1,5 +1,7 @@
 using UnityEngine;
-
+/// <summary>
+/// Handle with player controllers input using IUpdater and IFixed Updater
+/// </summary>
 public class PlayerController : MonoBehaviour, IUpdater, IFixedUpdater
 {
     [Header("References")]
@@ -9,12 +11,15 @@ public class PlayerController : MonoBehaviour, IUpdater, IFixedUpdater
     [Header("Temp Data")]
     [SerializeField] private Vector3 _moveInput;
 
+    #region Start Methods
     private void Start()
     {
         UpdaterManager.Instance.AddIUpdaterInList(this);
         UpdaterManager.Instance.AddIFixedUpdaterInList(this);
     }
+    #endregion
 
+    #region Updaters Methods
     public void UpdateSection()
     {
         _moveInput = new Vector3(_joystick.Horizontal, 0, _joystick.Vertical);
@@ -24,4 +29,5 @@ public class PlayerController : MonoBehaviour, IUpdater, IFixedUpdater
     {
         _playerModel.MoveCharacter(_moveInput);
     }
+    #endregion
 }

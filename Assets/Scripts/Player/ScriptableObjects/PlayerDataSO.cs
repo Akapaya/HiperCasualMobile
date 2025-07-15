@@ -1,5 +1,7 @@
 using UnityEngine;
-
+/// <summary>
+/// Data for enemy id, stats and inventory
+/// </summary>
 [CreateAssetMenu(fileName = "PlayerData", menuName = "PlayerData/PlayerDataSO", order = 1)]
 public class PlayerDataSO : ScriptableObject
 {
