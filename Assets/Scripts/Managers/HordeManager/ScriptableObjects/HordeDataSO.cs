@@ -1,5 +1,7 @@
 using UnityEngine;
-
+/// <summary>
+/// Horde Settings, spawn interval and enemies ID to spawn
+/// </summary>
 [CreateAssetMenu(fileName = "HordeData", menuName = "HordeData/HordeDataSO", order = 1)]
 public class HordeDataSO : ScriptableObject
 {

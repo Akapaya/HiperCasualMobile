@@ -1,7 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-
+/// <summary>
+/// Horde Manager to spawn enemies using Object Pool.
+/// </summary>
 public class HordeManager : MonoBehaviour, IUpdater, IPoolUser
 {
     [Header("References")]
@@ -12,8 +13,8 @@ public class HordeManager : MonoBehaviour, IUpdater, IPoolUser
     [SerializeField] private Transform[] _spawnPoints;
 
     [Header("Temp Data")]
-    private float timer;
-    private List<GameObject> activeEnemies = new(10);
+    [SerializeField] private float _timer;
+    [SerializeField] private List<GameObject> _activeEnemiesList = new(10);
 
     #region Start Methods
     void Awake()
@@ -31,17 +32,20 @@ public class HordeManager : MonoBehaviour, IUpdater, IPoolUser
     #region IUpdater
     public void UpdateSection()
     {
-        timer += Time.deltaTime;
+        _timer += Time.deltaTime;
 
-        if (timer >= _hordeDataSO.SpawnInterval && activeEnemies.Count < _hordeDataSO.MaxEnemies)
+        if (_timer >= _hordeDataSO.SpawnInterval && _activeEnemiesList.Count < _hordeDataSO.MaxEnemies)
         {
             SpawnEnemy();
-            timer = 0f;
+            _timer = 0f;
         }
     }
     #endregion
 
     #region Horde Methods
+    /// <summary>
+    /// Spawn Enemy getting of Object Pool in random position.
+    /// </summary>
     void SpawnEnemy()
     {
         string randomID = _hordeDataSO.EnemiesID[Random.Range(0,_hordeDataSO.EnemiesID.Length)];
@@ -57,14 +61,14 @@ public class HordeManager : MonoBehaviour, IUpdater, IPoolUser
         enemyGO.transform.position = point.position;
         enemyGO.transform.rotation = Quaternion.identity;
 
-        activeEnemies.Add(enemyGO);
+        _activeEnemiesList.Add(enemyGO);
     }
     #endregion
 
     #region IPoolUser
     public void OnObjectsReturned(GameObject obj)
     {
-        activeEnemies.Remove(obj);
+        _activeEnemiesList.Remove(obj);
     }
     #endregion
 }
