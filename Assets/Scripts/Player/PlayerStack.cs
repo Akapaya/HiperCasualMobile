@@ -11,7 +11,7 @@ public class PlayerStack : MonoBehaviour, IUpdater
     [SerializeField] private Transform _stackPoint;
 
     [Header("Temp Data")]
-    [SerializeField] private List<Transform> _stack;
+    [SerializeField] private List<StackItemStruct> _stack = new();
 
     [Header("Settings")]
     [SerializeField] private float _stackHeight = 0.5f;
@@ -20,7 +20,7 @@ public class PlayerStack : MonoBehaviour, IUpdater
     [SerializeField] private Vector3 _rotationOffset;
     [SerializeField] private RotationAxis _lockAxes = RotationAxis.Y;
 
-    public List<Transform> Stack { get => _stack;}
+    public List<StackItemStruct> Stack { get => _stack;}
 
     [System.Flags]
     public enum RotationAxis
@@ -61,9 +61,9 @@ public class PlayerStack : MonoBehaviour, IUpdater
         {
             stackable.ActiveOnStackState();
             Vector3 stackOffset = new Vector3(0, _stackHeight, 0);
-            Transform last = _stack.Count > 0 ? _stack[_stack.Count - 1].transform : _stackPoint;
+            Transform last = _stack.Count > 0 ? _stack[_stack.Count - 1].Item.transform : _stackPoint;
             target.position = last.position + stackOffset;
-            _stack.Add(target);
+            _stack.Add(new StackItemStruct(stackable, target.GetComponent<ISellItem>(), target.gameObject));
         }
     }
 
@@ -78,12 +78,12 @@ public class PlayerStack : MonoBehaviour, IUpdater
         
         if(index != 0)
         {
-            basePosition = _stack[index - 1].position;
+            basePosition = _stack[index - 1].Item.transform.position;
         }
 
         Vector3 desired = basePosition + Vector3.up * _multiplyStackHeight;
 
-        _stack[index].position = Vector3.Lerp(_stack[index].position,desired,Time.deltaTime * _inertiaSpeed);
+        _stack[index].Item.transform.position = Vector3.Lerp(_stack[index].Item.transform.position,desired,Time.deltaTime * _inertiaSpeed);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class PlayerStack : MonoBehaviour, IUpdater
     {
         Vector3 baseEuler = transform.rotation.eulerAngles;
         Vector3 targetEuler = baseEuler + _rotationOffset;
-        Vector3 currentEuler = _stack[index].rotation.eulerAngles;
+        Vector3 currentEuler = _stack[index].Item.transform.rotation.eulerAngles;
 
         if ((_lockAxes & RotationAxis.X) != 0) targetEuler.x = currentEuler.x;
         if ((_lockAxes & RotationAxis.Y) != 0) targetEuler.y = currentEuler.y;
@@ -102,7 +102,7 @@ public class PlayerStack : MonoBehaviour, IUpdater
 
         Quaternion filteredRotation = Quaternion.Euler(targetEuler);
 
-        _stack[index].rotation = Quaternion.Lerp(_stack[index].rotation,filteredRotation,Time.deltaTime * _inertiaSpeed);
+        _stack[index].Item.transform.rotation = Quaternion.Lerp(_stack[index].Item.transform.rotation,filteredRotation,Time.deltaTime * _inertiaSpeed);
     }
     #endregion
 

@@ -19,7 +19,7 @@ public class SellArea : MonoBehaviour, IArea
     [SerializeField] private float _timeUntilCleanStack = 3f;
 
     [Header("Temp Data")]
-    [SerializeField] private List<Transform> _stackItems = new(10);
+    [SerializeField] private List<StackItemStruct> _stackItems = new(10);
 
     [Header("Events")]
     [SerializeField] private Action<int> OnSellItem;
@@ -64,9 +64,9 @@ public class SellArea : MonoBehaviour, IArea
             var obj = _playerStack.Stack[_playerStack.Stack.Count - 1];
             _playerStack.Stack.RemoveAt(_playerStack.Stack.Count - 1);
             _stackItems.Add(obj);
-            obj.transform.parent = null;
+            obj.Item.transform.parent = null;
 
-            StartCoroutine(MoveInArc(obj.transform));
+            StartCoroutine(MoveInArc(obj));
 
             yield return new WaitForSeconds(0.1f);
         }
@@ -76,9 +76,9 @@ public class SellArea : MonoBehaviour, IArea
     /// Animation to move in Arc the stack item dropped
     /// </summary>
     /// <param name="obj">Transform of stack item</param>
-    private IEnumerator MoveInArc(Transform obj)
+    private IEnumerator MoveInArc(StackItemStruct obj)
     {
-        Vector3 start = obj.position;
+        Vector3 start = obj.Item.transform.position;
 
         Vector3 peak = Vector3.Lerp(start, _targetPoint.position, 0.5f);
         peak.y += _arcHeight;
@@ -89,25 +89,25 @@ public class SellArea : MonoBehaviour, IArea
         while (elapsed < halfDuration)
         {
             float t = elapsed / halfDuration;
-            obj.position = Vector3.Lerp(start, peak, t);
+            obj.Item.transform.position = Vector3.Lerp(start, peak, t);
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        obj.position = peak;
+        obj.Item.transform.position = peak;
 
         elapsed = 0f;
 
         while (elapsed < halfDuration)
         {
             float t = elapsed / halfDuration;
-            obj.position = Vector3.Lerp(peak, _targetPoint.position, t);
+            obj.Item.transform.position = Vector3.Lerp(peak, _targetPoint.position, t);
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        obj.position = _targetPoint.position;
-        OnSellItem?.Invoke(obj.GetComponent<ISellItem>().ValueItem);
+        obj.Item.transform.position = _targetPoint.position;
+        OnSellItem?.Invoke(obj.SellItem.ValueItem);
     }
 
     /// <summary>
@@ -119,12 +119,12 @@ public class SellArea : MonoBehaviour, IArea
 
         while (_stackItems.Count > 0)
         {
-            Transform obj = _stackItems[_stackItems.Count - 1];
+            StackItemStruct obj = _stackItems[_stackItems.Count - 1];
             _stackItems.RemoveAt(_stackItems.Count - 1);
 
-            string family = obj.gameObject.GetComponent<IStackable>().StackFamily;
+            string family = obj.Stackable.StackFamily;
 
-            ObjectPoolManager.Instance.Return(family, obj.gameObject);
+            ObjectPoolManager.Instance.Return(family, obj.Item.gameObject);
 
             yield return new WaitForSeconds(0.1f);
         }
