@@ -2026,8 +2026,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5edfdc2becbb6c04dae7630183abe154, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ragdollBodies:
+  _ragdollBodies:
   - {fileID: 8709912245596641313}
+  - {fileID: 7347533672321206862}
   - {fileID: 7750528052189193581}
   - {fileID: 8479233602182085640}
   - {fileID: 4559038910462926418}
@@ -2036,10 +2037,10 @@ MonoBehaviour:
   - {fileID: 5488056402829556225}
   - {fileID: 8364301889812094818}
   - {fileID: 2606571750984833931}
-  - {fileID: 7347533672321206862}
   - {fileID: 6074313026141598979}
-  ragdollColliders:
+  _ragdollColliders:
   - {fileID: 1413460498570665618}
+  - {fileID: 3865272663948019882}
   - {fileID: 224074833522242834}
   - {fileID: 6728379452534281018}
   - {fileID: 4138226023559035520}
@@ -2048,10 +2049,9 @@ MonoBehaviour:
   - {fileID: 2000443682918643510}
   - {fileID: 8853183249529280273}
   - {fileID: 290103958725986271}
-  - {fileID: 3865272663948019882}
   - {fileID: 2038556339431489300}
-  mainCollider: {fileID: 7044566252557836984}
-  animator: {fileID: 3641801172823493904}
+  _mainCollider: {fileID: 7044566252557836984}
+  _animator: {fileID: 3641801172823493904}
 --- !u!1 &7740556987463528224
 GameObject:
   m_ObjectHideFlags: 0
