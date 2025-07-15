@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
+/// <summary>
+/// Manager to handle possible NPC paths, generating random paths according to the NPC's current position.
+/// </summary>
 public class WaypointManager : MonoBehaviour
 {
     [Header("References")]
@@ -16,6 +18,12 @@ public class WaypointManager : MonoBehaviour
     }
     #endregion
 
+    #region WayPoints Methods
+    /// <summary>
+    /// Generate Random Path using random number of waypoints
+    /// </summary>
+    /// <param name="worldPosition">Current position of NPC</param>
+    /// <returns>Return queue of waypoints to move</returns>
     public Queue<Waypoint> GenerateRandomPath(Vector3 worldPosition)
     {
         int numberOfWaypoints = Random.Range(1, allWaypoints.Count -1);
@@ -35,6 +43,11 @@ public class WaypointManager : MonoBehaviour
         return waypoints;
     }
 
+    /// <summary>
+    /// Get the closest waypoint of current position of NPC
+    /// </summary>
+    /// <param name="worldPosition">Current position of NPC</param>
+    /// <returns>Return closest waypoint of NPC</returns>
     public Waypoint GetClosestWaypoint(Vector3 worldPosition)
     {
         Waypoint closest = null;
@@ -54,4 +67,5 @@ public class WaypointManager : MonoBehaviour
 
         return closest;
     }
+    #endregion
 }

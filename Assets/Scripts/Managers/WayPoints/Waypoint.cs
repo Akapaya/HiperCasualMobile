@@ -1,12 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Way points to creates paths to NPCs moving without rigid body or navMesh
+/// </summary>
 [ExecuteInEditMode]
 public class Waypoint : MonoBehaviour
 {
     [Header("Settings")]
     public List<Waypoint> connectedWaypoints = new List<Waypoint>();
 
+    /// <summary>
+    /// Draw lines to paths to vizualise.
+    /// </summary>
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
