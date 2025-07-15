@@ -1,5 +1,7 @@
 using UnityEngine;
-
+/// <summary>
+/// Camera settings to follow
+/// </summary>
 [CreateAssetMenu(fileName = "CameraData", menuName = "CameraData/CameraDataSO")]
 public class CameraDataSO : ScriptableObject
 {
