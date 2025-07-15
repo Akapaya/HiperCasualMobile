@@ -1,7 +1,9 @@
 using UnityEngine;
 using PrimeTween;
 using System;
-
+/// <summary>
+/// Manager to handle possible upgrades and purchases.
+/// </summary>
 public class UpgradeManager : MonoBehaviour
 {
     [Header("References")]
@@ -21,12 +23,18 @@ public class UpgradeManager : MonoBehaviour
     [Header("Events")]
     public Action<UpgradeSO> OnPurchasedUpgrade;
 
+    #region Start Methods
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
+    #endregion
 
+    #region Upgrades Methods
+    /// <summary>
+    /// Choose randomly 3 Upgrades to show in upgrade panels
+    /// </summary>
     public void OpenUpgradePanel()
     {
         _upgradePanel.anchoredPosition = _offscreenOffset;
@@ -40,14 +48,22 @@ public class UpgradeManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Close Upgrade Panel
+    /// </summary>
     public void CloseUpgradePanel()
     {
         _tween = Tween.UIAnchoredPosition(_upgradePanel, _offscreenOffset, _duration, _easeAnimation)
             .OnComplete(() => _upgradePanel.gameObject.SetActive(false));
     }
 
+    /// <summary>
+    /// Invoke event in case of buy a upgrade
+    /// </summary>
+    /// <param name="upgradeSO">Data of upgrade Purchased</param>
     public void PurchaseUpgrade(UpgradeSO upgradeSO)
     {
         OnPurchasedUpgrade?.Invoke(upgradeSO);
     }
+    #endregion
 }

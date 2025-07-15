@@ -1,6 +1,8 @@
 using TMPro;
 using UnityEngine;
-
+/// <summary>
+/// Script to handle UI Panels of upgrade
+/// </summary>
 public class UpgradePanel : MonoBehaviour
 {
     [Header("References")]
