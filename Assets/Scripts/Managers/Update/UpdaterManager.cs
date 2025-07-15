@@ -57,22 +57,22 @@ public class UpdaterManager : MonoBehaviour
 
     void LateUpdate()
     {
-        foreach(ILateUpdater lateUpdater in _lateUpdaters)
+        for (int i = _lateUpdaters.Count - 1; i >= 0; i--)
         {
-            if(lateUpdater != null)
+            if (_lateUpdaters[i] != null)
             {
-                lateUpdater.LateUpdateSection();
+                _lateUpdaters[i].LateUpdateSection();
             }
         }
     }
 
     private void FixedUpdate()
     {
-        foreach(IFixedUpdater fixedUpdater in _fixedUpdaters)
+        for (int i = _fixedUpdaters.Count - 1; i >= 0; i--)
         {
-            if(fixedUpdater != null)
+            if (_fixedUpdaters[i] != null)
             {
-                fixedUpdater.FixedUpdateSection();
+                _fixedUpdaters[i].FixedUpdateSection();
             }
         }
     }
