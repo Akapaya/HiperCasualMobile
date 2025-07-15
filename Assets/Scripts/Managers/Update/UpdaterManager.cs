@@ -1,7 +1,8 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-
+/// <summary>
+/// Manager to centralize updates for the entire game, to avoid multiple C++ method calls and optimize the game.
+/// </summary>
 public class UpdaterManager : MonoBehaviour
 {
     [Header("References")]
@@ -12,12 +13,15 @@ public class UpdaterManager : MonoBehaviour
     private List<IFixedUpdater> _fixedUpdaters = new(10);
     private List<ILateUpdater> _lateUpdaters = new(10);
 
+    #region Start Methods
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
+    #endregion
 
+    #region Registers Methods
     public void AddIUpdaterInList(IUpdater updater)
     {
         _updaters.Add(updater);
@@ -37,7 +41,9 @@ public class UpdaterManager : MonoBehaviour
     {
         _lateUpdaters.Add(updater);
     }
+    #endregion
 
+    #region Updaters Methods
     void Update()
     {
         for (int i = _updaters.Count - 1; i >= 0; i--)
@@ -70,4 +76,5 @@ public class UpdaterManager : MonoBehaviour
             }
         }
     }
+    #endregion
 }
