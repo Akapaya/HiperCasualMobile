@@ -6,6 +6,7 @@ Projeto mobile 3D no estilo Hiper Casual desenvolvido em Unity, com foco em dese
 
 Este projeto simula um jogo mobile onde o jogador enfrenta NPCs em um ambiente com movimentação, ao passar perto de um NPCs ele empurra-o ativando o ragdoll e indo para a pilha, upgrades que melhoram os status como maiores pilhas de items e velocidade. O jogo foi projetado com diversos managers customizados para centralizar responsabilidades e garantir flexibilidade.
 
+- [Link para o APK](https://github.com/Akapaya/HiperCasualMobile/releases/tag/0.1)
 
 https://github.com/user-attachments/assets/a26962f4-f251-4c77-aad5-f335e5620a98
 
